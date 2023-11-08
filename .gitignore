@@ -8,6 +8,7 @@ __pycache__/
 
 #Let's ignore the datasets as well. This was addressed in previous issues.
 datasets/
+Models/
 
 # Distribution / packaging
 .Python

@@ -7,9 +7,8 @@ One pivotal tool in detecting pneumonia is the Chest X-ray. When pneumonia takes
 Our new system offers a novel approach: leveraging the power of machine learning to classify these X-ray images as either "normal" or indicative of "pneumonia." Think of it as an expert diagnostic tool, fine-tuned to detect subtle hints and signs on the X-rays. Such a system can drastically elevate diagnostic accuracy.
 
 The importance of timely pneumonia detection cannot be overstated, given its health implications. While the conventional diagnostic approach is heavily reliant on radiologists' keen eyes, our system aims to automate this process. In doing so, it not only expedites diagnosis but also minimizes human errors, making the entire process more efficient and precise.
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 # CNN for Pneumonia Detection from Chest X-Rays
@@ -83,6 +82,46 @@ The implemented CNN model demonstrates the potential of deep learning in medical
 - However, there can be some enhancements that can be made: 
 - Fix class im-balance.
 - Increase EPOCHs for training.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Addressing Class Imbalance in Pneumonia Detection with CNNs
+## Balanced-IncreasedEpochs-CNN:
+
+## Introduction
+As an Author tasked with enhancing a CNN for pneumonia detection from chest X-rays, I identified class imbalance as a significant challenge from previously trained CNN. The dataset consists of 3,800 pneumonia samples compared to only 1,400 normal samples. Such a disparity can bias the CNN towards predicting pneumonia, which could increase the false positive rate.
+
+## Why Class Imbalance Matters
+Class imbalance can greatly affect the predictive performance of machine learning models. In medical diagnostics, the repercussions of this can be severe, as it may lead to a high misdiagnosis rate. Specifically, for pneumonia detection, the model might incorrectly identify healthy patients as having the condition due to the imbalance.
+
+## Approach to Address Class Imbalance
+To address the class imbalance issue, I implemented **class weights** during the training of the CNN. This technique adjusts the model's focus towards underrepresented classes, increasing the penalty for misclassifying the minority class to incentivize the model to pay more attention to the 'NORMAL' samples.
+
+## Implementation
+Class weights were calculated using the `compute_class_weight` function from `scikit-learn`. This method ensures a balanced representation of classes by adjusting weights inversely proportional to class frequencies. These calculated weights were integrated into the training process via the `fit` method of the Keras model.
+
+## Expected Outcomes
+By applying class weights, the author aims to:
+
+- **Enhance Sensitivity**: Improve the model's ability to correctly identify true negative cases, which are actual normal X-rays.
+- **Improve Specificity**: Decrease the number of false positives, where normal cases are wrongly labeled as pneumonia.
+- **Balance Precision and Recall**: Find a better balance between the accuracy of positive predictions and the ability to identify all actual positives.
+
+## Conclusion
+The inclusion of class weights in the CNN model is designed to yield more reliable and balanced diagnostic predictions. 
+
+_Confusion Matrix of the bieCNN:_
+![image](https://github.com/Khurdhula-Harshavardhan/Pneumonia-Diagnosis-Using-AI/assets/60458750/410f1a3f-e5df-42f9-b14a-5cacf40645d6)
+
+The model is now better equipped to discern patterns indicative of pneumonia while correctly identifying normal X-rays, there's an additional gain in performance from 87% to 89~90% stable. Here are the bieCNN's metrics:
+
+![image](https://github.com/Khurdhula-Harshavardhan/Pneumonia-Diagnosis-Using-AI/assets/60458750/49abc398-7650-4022-b3ea-00635a9bd708)
+
+
+These modifications are crucial for the model's performance, ensuring its utility in clinical settings and also addressing previously issues from Vanilla CNN.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
 
 _**By Author,
 @Khurdhula-Harshavardhan, 

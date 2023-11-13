@@ -104,9 +104,3 @@ class VGG16():
                 "Status": 500,
                 "Error": "The following error occured while trying to make prediction your image: "+str(e)
             }
-
-def driver():
-    obj = VGG16()
-
-
-driver()

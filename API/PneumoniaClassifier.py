@@ -17,6 +17,7 @@ class VGG16():
     __model = None
     __image_data = None
     __xray = None
+    __THRESHOLD__ = None
 
     def __init__(self) -> None:
         """
@@ -25,10 +26,11 @@ class VGG16():
         try:
             __path__ = "Models/VGG16.joblib"
             self.__model = joblib.load(__path__)
+            self.__THRESHOLD__ = 0.40
         except Exception as e:
             print("[ERR] The following exception occured while trying to load the model: "+str(e))
 
-    def decode_image(self, encoded_image: str) -> str:
+    def __decode_image(self, encoded_image: str) -> str:
         """
         The VGG16.decode_image() accepts a base64 encoded string which is passed from the client side.
         This image is used to retracted by decoding it and then creating a string of Bytes, which represents data of the image,
@@ -37,13 +39,14 @@ class VGG16():
         try:
             image_data = base64.b64decode(encoded_image) #decode the image.
             self.__image_data = Image.open(BytesIO(image_data)) #create bytes data from the image data.
+            return self.__image_data
         except Exception as e:
-            {
+            return {
                 "Status": 500,
                 "Error": "The following error occured while trying to decode your image: "+str(e)
             }
 
-    def preprocess_xray(self) -> np.array:
+    def __preprocess_xray(self) -> np.array:
         """
         Preprocessing is an mandatory step for the VGG16,
         1. xray has to be reshaped to 224 x 224.
@@ -58,9 +61,48 @@ class VGG16():
             self.__xray /= 255.0 #normalize the values to 0~1
             return self.__xray
         except Exception as e:
-            {
+            return {
                 "Status": 500,
                 "Error": "The following error occured while trying to preprocess your image: "+str(e)
+            }
+
+    def __get_label(self, probability: float) -> str:
+        """
+        The get_label method compares the probablity/confidence against the Threshold:
+        If the probablity is greater than the threshold we predict the label to be, "Postive"
+        else, "Negative"
+        """
+        try:
+            if probability> self.__THRESHOLD__:
+                return "Positive"
+            else:
+                return "Negative"
+            
+        except Exception as e:
+            return {
+                "Status": 500,
+                "Error": "The following error occured while trying to generate label your image: "+str(e)
+            }
+
+    def prediction(self, encoded_image: str) -> dict:
+        """
+        This method is the primary method which is used to make prediction on the image provided.
+        """
+        try:
+            xray = self.__decode_image(encoded_image=encoded_image) #decode the xray.
+            xray = self.__preprocess_xray() #preprocess the xray.
+            prediction =  self.__model.predict(xray)
+            probability = prediction[0][0]
+
+            result = dict()
+            result["Status"] = 200
+            result["Pneumonia"] = self.__get_label()
+            result["Confidence"] = probability
+            result["Copyright"] = "Harsha Vardhan, Khurdula :-: hkhurdul@pfw.edu" 
+        except Exception as e:
+            return {
+                "Status": 500,
+                "Error": "The following error occured while trying to make prediction your image: "+str(e)
             }
 
 def driver():

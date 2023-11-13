@@ -58,10 +58,14 @@ class VGG16():
         4. normalize the array to 0~1.
         """
         try:
-            self.__xray = self.__image_data.resize((224, 224)) #resize the xray to 224 x 224.
-            self.__xray = image.img_to_array(self.__xray) #Conver the PIL image to a numpy array.
-            self.__xray = np.expand_dims(self.__xray, axis=0) #exapnd dimensions to 3 channels.
-            self.__xray /= 255.0 #normalize the values to 0~1
+            self.__xray = self.__image_data.resize((224, 224)) # Resize the xray to 224 x 224.
+        
+            if self.__xray.mode != 'RGB':
+                self.__xray = self.__xray.convert('RGB')  # Convert grayscale to RGB if necessary.
+            self.__xray = image.img_to_array(self.__xray) # Convert the PIL image to a numpy array.
+            self.__xray = np.expand_dims(self.__xray, axis=0) # Expand dimensions to 3 channels.
+            self.__xray /= 255.0 # Normalize the values to 0~1.
+
             return self.__xray
         except Exception as e:
             return {
@@ -102,8 +106,9 @@ class VGG16():
             result = dict()
             result["Status"] = 200
             result["Pneumonia"] = self.__get_label(probability= probability)
-            result["Confidence"] = probability
+            result["Confidence"] = float(probability)
             result["Copyright"] = "Harsha Vardhan, Khurdula :-: hkhurdul@pfw.edu" 
+            return result
         except Exception as e:
             return {
                 "Status": 500,

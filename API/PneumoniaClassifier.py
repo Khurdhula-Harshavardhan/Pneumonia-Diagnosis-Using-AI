@@ -58,7 +58,10 @@ class VGG16():
             self.__xray /= 255.0 #normalize the values to 0~1
             return self.__xray
         except Exception as e:
-            pass
+            {
+                "Status": 500,
+                "Error": "The following error occured while trying to preprocess your image: "+str(e)
+            }
 
 def driver():
     obj = VGG16()

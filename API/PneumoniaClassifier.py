@@ -24,9 +24,12 @@ class VGG16():
         The constructor must initialize the model, prior to anything.
         """
         try:
-            __path__ = "Models/VGG16.joblib"
+            print("Attempting to load Model please wait...")
+            __path__ = "../Models/VGG16.joblib"
             self.__model = joblib.load(__path__)
+            print("[LOG] Model has been initialized successfully.")
             self.__THRESHOLD__ = 0.40
+            print("[LOG] Model-Threshold has been set to 0.400 successfully.")
         except Exception as e:
             print("[ERR] The following exception occured while trying to load the model: "+str(e))
 
@@ -91,8 +94,10 @@ class VGG16():
         try:
             xray = self.__decode_image(encoded_image=encoded_image) #decode the xray.
             xray = self.__preprocess_xray() #preprocess the xray.
-            prediction =  self.__model.predict(xray)
-            probability = prediction[0][0]
+            if self.__model is None:
+                raise Exception("Model did not load!")
+            predicted =  self.__model.predict(xray)
+            probability = predicted[0][0]
 
             result = dict()
             result["Status"] = 200
@@ -104,3 +109,4 @@ class VGG16():
                 "Status": 500,
                 "Error": "The following error occured while trying to make prediction your image: "+str(e)
             }
+        

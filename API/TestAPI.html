@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload and Predict</title>
+    <script>
+        // Function to handle the image upload and sending the request
+        function uploadAndPredict() {
+            var file = document.getElementById('imageFile').files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                // Convert image to base64 string
+                var base64String = reader.result.replace(/^data:image\/[a-z]+;base64,/, "");
+                // Send API request
+                sendApiRequest(base64String);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // Function to send the API request
+        function sendApiRequest(base64String) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://127.0.0.1:5000/predict", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    // Displaying the result
+                    document.getElementById('result').innerHTML = 'Prediction: ' + JSON.stringify(json);
+                }
+            };
+            var data = JSON.stringify({"xray": base64String});
+            xhr.send(data);
+        }
+    </script>
+</head>
+<body>
+    <h1>Upload Image for Prediction</h1>
+    <input type="file" id="imageFile" accept="image/jpeg">
+    <button onclick="uploadAndPredict()">Upload and Predict</button>
+    <div id="result"></div>
+</body>
+</html>

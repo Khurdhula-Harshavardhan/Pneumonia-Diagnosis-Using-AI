@@ -16,6 +16,7 @@ class VGG16():
     """
     __model = None
     __image_data = None
+    __xray = None
 
     def __init__(self) -> None:
         """
@@ -42,7 +43,22 @@ class VGG16():
                 "Error": "The following error occured while trying to decode your image: "+str(e)
             }
 
-
+    def preprocess_xray(self) -> np.array:
+        """
+        Preprocessing is an mandatory step for the VGG16,
+        1. xray has to be reshaped to 224 x 224.
+        2. covert the image data into an numpy array.
+        3. expland the dimensions to 3 channels.
+        4. normalize the array to 0~1.
+        """
+        try:
+            self.__xray = self.__image_data.resize(224, 224) #resize the xray to 224 x 224.
+            self.__xray = image.img_to_array(self.__xray) #Conver the PIL image to a numpy array.
+            self.__xray = np.expand_dims(self.__xray, axis=0) #exapnd dimensions to 3 channels.
+            self.__xray /= 255.0 #normalize the values to 0~1
+            return self.__xray
+        except Exception as e:
+            pass
 
 def driver():
     obj = VGG16()
